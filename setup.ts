@@ -178,9 +178,9 @@ for (const post of posts) {
     createPost.run(post.userId, post.subredditId, post.title, post.content, post.createdAt)
 }
 
-const createUserSubreddit = db.prepare(`
-INSERT INTO userSubreddits (userId, subredditId, dateJoined) VALUES (?, ?, ?)
-`)
-for (const userSubreddit of userSubreddits) {
-    createUserSubreddit.run(userSubreddit.userId, userSubreddit.subredditId, userSubreddit.dateJoined)
-}
+// const createUserSubreddit = db.prepare(`
+// INSERT INTO userSubreddits (userId, subredditId, dateJoined) VALUES (?, ?, ?)
+// `)
+// for (const userSubreddit of userSubreddits) {
+//     createUserSubreddit.run(userSubreddit.userId, userSubreddit.subredditId, userSubreddit.dateJoined)
+// }

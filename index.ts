@@ -10,6 +10,33 @@ const db = new Database('./data.db', {
     verbose: console.log
 })
 
+
+
+//Joining tables many to many
+
+// const gjej  Intervistuesut per Applicantet = db.prepare(`
+// SELECT intervituesit.* FROM intervistuesit
+// JOIN takimet ON intervistuesit.id = takimet.interviewerId
+// WHERE takimet.applicantId = ?;
+// `);
+
+
+const getSubredditsForUsers = db.prepare(`
+SELECT subreddits.* FROM subreddits
+JOIN posts ON subreddits.id = posts.subredditId
+WHERE posts.userId = ?
+`)
+
+
+
+// const getApplicantsForInterviewer = db.prepare(`
+// SELECT applicants.* FROM applicants
+// JOIN interviews ON applicants.id = interviews.applicantId
+// WHERE interviews.interviewerId = ?;
+// `);
+
+
+
 const createUser = db.prepare(`
 INSERT INTO users (name, email, password, displayName) VALUES (?, ?, ?, ?);
 `)

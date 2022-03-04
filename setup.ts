@@ -39,8 +39,8 @@ CREATE TABLE posts (
     content TEXT,
     createdAt TEXT,
     PRIMARY KEY (id),
-    FOREIGN KEY (userId) REFERENCES users(id)
-    FOREIGN KEY (subredditId) REFERENCES subreddits(id) 
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (subredditId) REFERENCES subreddits(id)
 );
 
 CREATE TABLE userSubreddits (
@@ -169,12 +169,12 @@ const userSubreddits = [
     },
     {
         userId: 4,
-        subredditId: 4,
+        subredditId: 2,
         dateJoined: "01.02.2022"
     },
     {
         userId: 5,
-        subredditId: 5,
+        subredditId: 3,
         dateJoined: "01.02.2022"
     }
 ]
@@ -192,14 +192,6 @@ const postsLikes = [
     {
         userId: 3,
         postsId: 3,
-    },
-    {
-        userId: 4,
-        postsId: 4,
-    },
-    {
-        userId: 5,
-        postsId: 1,
     }
 ]
 
@@ -227,7 +219,7 @@ const comments = [
         downvotes: 3
     },
     {
-        postsId: 4,
+        postsId: 2,
         userId: 4,
         content: "forth comment",
         upvotes: 4,
@@ -283,16 +275,16 @@ for (const post of posts) {
 
 
 
-// for (const userSubreddit of userSubreddits) {
-//     createUserSubreddit.run(userSubreddit.userId, userSubreddit.subredditId, userSubreddit.dateJoined)
-// }
+for (const userSubreddit of userSubreddits) {
+    createUserSubreddit.run(userSubreddit.userId, userSubreddit.subredditId, userSubreddit.dateJoined)
+}
 
 
-// for (const postLIke of postsLikes) {
-//     createPostLikes.run(postLIke.userId, postLIke.postsId)
-// }
+for (const postLIke of postsLikes) {
+    createPostLikes.run(postLIke.userId, postLIke.postsId)
+}
 
 
-// for (const comment of comments) {
-//     createComment.run(comment.postsId, comment.userId, comment.content, comment.upvotes, comment.downvotes)
-// }
+for (const comment of comments) {
+    createComment.run(comment.postsId, comment.userId, comment.content, comment.upvotes, comment.downvotes)
+}

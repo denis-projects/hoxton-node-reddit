@@ -4,6 +4,78 @@ const db = new Database("./data.db", {
     verbose: console.log,
 });
 
+
+db.exec(`
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS postsLikes;
+DROP TABLE IF EXISTS userSubreddits;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS subreddits;
+
+
+
+CREATE TABLE subreddits (
+    id INTEGER,
+    description TEXT,
+    background TEXT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE users (
+    id INTEGER,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    displayName TEXT NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE posts (
+    id INTEGER,
+    userId INTEGER,
+    subredditId INTEGER,
+    title TEXT,
+    content TEXT,
+    createdAt TEXT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id)
+    FOREIGN KEY (subredditId) REFERENCES subreddits(id) 
+);
+
+CREATE TABLE userSubreddits (
+    id INTEGER,
+    userId INTEGER,
+    subredditId INTEGER,
+    dateJoined TEXT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (subredditId) REFERENCES subreddits(id)
+);
+
+CREATE TABLE postsLikes (
+    id INTEGER,
+    userId INTEGER,
+    postsId INTEGER,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (postsId) REFERENCES posts(id)
+);
+
+CREATE TABLE comments (
+    id INTEGER,
+    postsId INTEGER,
+    userId INTEGER,
+    content TEXT,
+    upvotes INTEGER,
+    downvotes INTEGER,
+    PRIMARY KEY (id),
+    FOREIGN KEY (postsId) REFERENCES posts(id),
+    FOREIGN KEY (userId) REFERENCES users(id)
+);
+
+`);
+
 const users = [
     {
         name: "Denis",
@@ -164,118 +236,62 @@ const comments = [
 ]
 
 
-db.exec(`
-DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS postsLikes;
-DROP TABLE IF EXISTS userSubreddits;
-DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS subreddits;
-
-CREATE TABLE users (
-    id INTEGER,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
-    displayName TEXT NOT NULL UNIQUE,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE subreddits (
-    id INTEGER,
-    description TEXT,
-    background TEXT,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE posts (
-    id INTEGER,
-    userId INTEGER,
-    subredditId INTEGER,
-    title TEXT,
-    content TEXT,
-    createdAt TEXT,
-    PRIMARY KEY (id),
-    FOREIGN KEY (userId) REFERENCES users(id)
-    FOREIGN KEY (subredditId) REFERENCES subreddits(id) 
-);
-
-CREATE TABLE userSubreddits (
-    id INTEGER,
-    userId INTEGER,
-    subredditId INTEGER,
-    dateJoined TEXT,
-    PRIMARY KEY (id),
-    FOREIGN KEY (userId) REFERENCES users(id),
-    FOREIGN KEY (subredditId) REFERENCES subreddits(id)
-);
-
-CREATE TABLE postsLikes (
-    id INTEGER,
-    userId INTEGER,
-    postsId INTEGER,
-    PRIMARY KEY (id),
-    FOREIGN KEY (userId) REFERENCES users(id),
-    FOREIGN KEY (postsId) REFERENCES posts(id)
-);
-
-CREATE TABLE comments (
-    id INTEGER,
-    postsId INTEGER,
-    userId INTEGER,
-    content TEXT,
-    upvotes INTEGER,
-    downvotes INTEGER,
-    PRIMARY KEY (id),
-    FOREIGN KEY (postsId) REFERENCES posts(id),
-    FOREIGN KEY (userId) REFERENCES users(id)
-);
-
-`);
-
-
-const createUser = db.prepare(`
-INSERT INTO users (name, email, password, displayName) VALUES (?, ?, ?, ?)
-`)
-
-for (const user of users) {
-    createUser.run(user.name, user.email, user.password, user.displayName)
-}
 
 
 const createSubreddit = db.prepare(`
 INSERT INTO subreddits (description, background) VALUES (?, ?)
 `)
-for (const subreddit of subreddits) {
-    createSubreddit.run(subreddit.descripton, subreddit.background)
-}
+
+const createUser = db.prepare(`
+INSERT INTO users (name, email, password, displayName) VALUES (?, ?, ?, ?)
+`)
+
 
 
 const createPost = db.prepare(`
 INSERT INTO posts (userId, subredditId, title, content, createdAt) VALUES (?, ?, ?, ?, ?)
 `)
-for (const post of posts) {
-    createPost.run(post.userId, post.subredditId, post.title, post.content, post.createdAt)
-}
 
 const createUserSubreddit = db.prepare(`
 INSERT INTO userSubreddits (userId, subredditId, dateJoined) VALUES (?, ?, ?)
 `)
-// for (const userSubreddit of userSubreddits) {
-//     createUserSubreddit.run(userSubreddit.userId, userSubreddit.subredditId, userSubreddit.dateJoined)
-// }
+
 
 const createPostLikes = db.prepare(`
 INSERT INTO postsLikes (userId, postsId) VALUES (?, ?)
 `)
 
-// for (const postLIke of postsLikes) {
-//     createPostLikes.run(postLIke.userId, postLIke.postsId)
-// }
 
 const createComment = db.prepare(`
 INSERT INTO comments (postsId, userId, content, upvotes, downvotes) VALUES (?, ?, ?, ?, ?)
 `)
+
+
+
+for (const subreddit of subreddits) {
+    createSubreddit.run(subreddit.descripton, subreddit.background)
+}
+
+for (const user of users) {
+    createUser.run(user.name, user.email, user.password, user.displayName)
+}
+
+for (const post of posts) {
+    createPost.run(post.userId, post.subredditId, post.title, post.content, post.createdAt)
+}
+
+
+
+
+// for (const userSubreddit of userSubreddits) {
+//     createUserSubreddit.run(userSubreddit.userId, userSubreddit.subredditId, userSubreddit.dateJoined)
+// }
+
+
+// for (const postLIke of postsLikes) {
+//     createPostLikes.run(postLIke.userId, postLIke.postsId)
+// }
+
 
 // for (const comment of comments) {
 //     createComment.run(comment.postsId, comment.userId, comment.content, comment.upvotes, comment.downvotes)
